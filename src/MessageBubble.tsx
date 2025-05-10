@@ -1,8 +1,5 @@
-// src/components/MessageBubble.tsx
-import React from "react";
-
 type Message = {
-  role: "user" | "assistant";
+  role: string;
   content: string;
 };
 

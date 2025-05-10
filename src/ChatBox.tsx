@@ -1,22 +1,22 @@
-// src/components/ChatBox.tsx
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import MessageBubble from "./MessageBubble";
-
-type Message = {
-  role: "user" | "assistant";
-  content: string;
-};
+import ContactModal from "./Modal";
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState([
+    {
+      role: "assistant",
+      content: "👋 Willkommen bei BerlinBuddy! Wie kann ich dir helfen?",
+    },
+  ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleSend = () => {
     if (!input.trim()) return;
 
-    const userMessage: Message = { role: "user", content: input.trim() };
+    const userMessage = { role: "user", content: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
@@ -27,7 +27,7 @@ const ChatBox = () => {
         {
           role: "assistant",
           content:
-            "Das ist eine Beispielantwort. Bald kommt die echte von BerlinBuddy!",
+            "Das ist eine Beispielantwort. Bald kommt deine echte Antwort von BerlinBuddy!",
         },
       ]);
       setIsTyping(false);
@@ -40,21 +40,21 @@ const ChatBox = () => {
     }
   };
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  const toggleModal = () => setIsModalOpen((prev) => !prev);
 
   return (
     <div className="flex flex-col h-screen bg-[#0F0F0F] text-white">
+      {/* Header */}
       <header className="text-center py-4 border-b border-gray-800">
         <h1 className="text-2xl font-mono font-bold text-[#C8102E]">
           BerlinBuddy
         </h1>
         <p className="text-sm text-gray-400">
-          👋 Willkommen bei BerlinBuddy! Was brauchst du heute?
+          Dein Begleiter für ein einfaches Leben in Berlin!
         </p>
       </header>
 
+      {/* Chat Messages */}
       <main className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
         {messages.map((msg, i) => (
           <MessageBubble key={i} message={msg} />
@@ -71,10 +71,9 @@ const ChatBox = () => {
             </div>
           </div>
         )}
-
-        <div ref={bottomRef} />
       </main>
 
+      {/* Footer and Input */}
       <footer className="border-t border-gray-800 px-4 py-3 bg-[#0F0F0F]">
         <div className="flex items-center gap-2 bg-[#1F1F1F] border border-gray-700 rounded-md px-4 w-1/2 mx-auto">
           <input
@@ -93,6 +92,25 @@ const ChatBox = () => {
           </button>
         </div>
       </footer>
+
+      <button
+        onClick={toggleModal}
+        className="fixed bottom-4 left-4 bg-[#C8102E] text-white rounded-full p-2 shadow-lg hover:bg-[#a60e1c] transition"
+        style={{ fontSize: "18px" }}
+      >
+        💬
+      </button>
+
+      {/* Modal */}
+      <button
+        onClick={toggleModal}
+        className="fixed bottom-4 left-4 bg-[#C8102E] text-white rounded-full p-2 shadow-lg hover:bg-[#a60e1c] transition"
+        style={{ fontSize: "18px" }}
+      >
+        💬
+      </button>
+
+      <ContactModal isOpen={isModalOpen} onClose={toggleModal} />
     </div>
   );
 };
