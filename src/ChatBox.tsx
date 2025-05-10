@@ -58,10 +58,10 @@ const ChatBox = () => {
           BerlinBuddy
         </h1>
         <p className="text-sm text-gray-400">
-          👋{" "}
+          {" "}
           {language === "de"
-            ? "Willkommen bei BerlinBuddy! Wie kann ich dir helfen?"
-            : "Welcome to BerlinBuddy! How can I help you?"}
+            ? "Dein Begleiter für ein einfaches Leben in Berlin!"
+            : "Your companion for a simple life in Berlin!"}
         </p>
       </header>
 
