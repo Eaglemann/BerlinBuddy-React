@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import Flag from "react-world-flags";
 import MessageBubble from "./MessageBubble";
-import ContactModal from "./Modal";
+import Modal from "./Modal";
 
 const ChatBox = () => {
   const [messages, setMessages] = useState([
@@ -12,6 +13,7 @@ const ChatBox = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [language, setLanguage] = useState<"de" | "en">("de");
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -27,7 +29,9 @@ const ChatBox = () => {
         {
           role: "assistant",
           content:
-            "Das ist eine Beispielantwort. Bald kommt deine echte Antwort von BerlinBuddy!",
+            language === "de"
+              ? "Das ist eine Beispielantwort. Bald kommt deine echte Antwort von BerlinBuddy!"
+              : "This is a sample answer. Soon you'll get your real response from BerlinBuddy!",
         },
       ]);
       setIsTyping(false);
@@ -42,6 +46,10 @@ const ChatBox = () => {
 
   const toggleModal = () => setIsModalOpen((prev) => !prev);
 
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === "de" ? "en" : "de"));
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#0F0F0F] text-white">
       {/* Header */}
@@ -50,9 +58,21 @@ const ChatBox = () => {
           BerlinBuddy
         </h1>
         <p className="text-sm text-gray-400">
-          Dein Begleiter für ein einfaches Leben in Berlin!
+          👋{" "}
+          {language === "de"
+            ? "Willkommen bei BerlinBuddy! Wie kann ich dir helfen?"
+            : "Welcome to BerlinBuddy! How can I help you?"}
         </p>
       </header>
+
+      {/* Language Toggle Button */}
+      <button
+        onClick={toggleLanguage}
+        className="absolute top-4 right-4 bg-transparent border-2 border-[#C8102E] rounded-full w-10 h-10 flex justify-center items-center hover:bg-[#C8102E] hover:text-white transition"
+      >
+        {/* Use the Flag component with respective country codes */}
+        <Flag code={language === "de" ? "GB" : "DE"} className="w-6 h-6" />
+      </button>
 
       {/* Chat Messages */}
       <main className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
@@ -81,14 +101,18 @@ const ChatBox = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Schreib eine Nachricht..."
+            placeholder={
+              language === "de"
+                ? "Schreib eine Nachricht..."
+                : "Write a message..."
+            }
             className="flex-1 bg-transparent text-sm text-white py-2 focus:outline-none placeholder-gray-500"
           />
           <button
             onClick={handleSend}
             className="text-[#C8102E] font-medium hover:underline transition"
           >
-            Senden
+            {language === "de" ? "Senden" : "Send"}
           </button>
         </div>
       </footer>
@@ -102,15 +126,7 @@ const ChatBox = () => {
       </button>
 
       {/* Modal */}
-      <button
-        onClick={toggleModal}
-        className="fixed bottom-4 left-4 bg-[#C8102E] text-white rounded-full p-2 shadow-lg hover:bg-[#a60e1c] transition"
-        style={{ fontSize: "18px" }}
-      >
-        💬
-      </button>
-
-      <ContactModal isOpen={isModalOpen} onClose={toggleModal} />
+      {isModalOpen && <Modal toggleModal={toggleModal} language={language} />}
     </div>
   );
 };
