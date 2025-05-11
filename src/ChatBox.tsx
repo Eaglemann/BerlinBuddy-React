@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Flag from "react-world-flags";
+import axios from "axios";
 import MessageBubble from "./MessageBubble";
 import Modal from "./Modal";
 
@@ -15,27 +16,43 @@ const ChatBox = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [language, setLanguage] = useState<"de" | "en">("de");
 
-  const handleSend = () => {
-    if (!input.trim()) return;
+  const handleSend = async () => {
+    if (!input.trim() || isTyping) return; // prevent sending while waiting for response
 
     const userMessage = { role: "user", content: input.trim() };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_SERVICES}/send-question`,
+        {
+          question: input.trim(),
+        }
+      );
+
+      const assistantMessage = {
+        role: "assistant",
+        content: response.data.answer || "Ich habe leider keine Antwort.",
+      };
+
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error("Error:", error);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
           content:
             language === "de"
-              ? "Das ist eine Beispielantwort. Bald kommt deine echte Antwort von BerlinBuddy!"
-              : "This is a sample answer. Soon you'll get your real response from BerlinBuddy!",
+              ? "❌ Es gab ein Problem beim Laden der Antwort."
+              : "❌ There was a problem loading the response.",
         },
       ]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
