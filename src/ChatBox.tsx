@@ -124,9 +124,42 @@ const ChatBox = () => {
           />
           <button
             onClick={handleSend}
-            className="text-[#C8102E] font-medium hover:underline transition"
+            disabled={isTyping}
+            className={`flex items-center gap-2 font-medium transition ${
+              isTyping
+                ? "text-gray-500 cursor-not-allowed"
+                : "text-[#C8102E] hover:underline"
+            }`}
           >
-            {language === "de" ? "Senden" : "Send"}
+            {isTyping && (
+              <svg
+                className="animate-spin h-4 w-4 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                />
+              </svg>
+            )}
+            {isTyping
+              ? language === "de"
+                ? "Sendet..."
+                : "Sending..."
+              : language === "de"
+              ? "Senden"
+              : "Send"}
           </button>
         </div>
       </footer>
