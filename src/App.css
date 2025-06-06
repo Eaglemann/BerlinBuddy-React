@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .animate-bounce-delayed-1 {
+    animation-delay: -0.3s;
+  }
+  .animate-bounce-delayed-2 {
+    animation-delay: -0.15s;
+  }
+}
